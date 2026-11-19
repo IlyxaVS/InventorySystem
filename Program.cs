@@ -1,6 +1,8 @@
 using InventorySystem.Data;
+using InventorySystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace InventorySystem
 {
@@ -19,6 +21,7 @@ namespace InventorySystem
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IInventoryService, InventoryService>();
 
             var app = builder.Build();
 

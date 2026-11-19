@@ -6,9 +6,11 @@ namespace InventorySystem.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Вкажіть назву")]
+        [Display(Name = "Назва")]
         public string Name { get; set; } = "";
 
+        [Display(Name = "Адреса")]
         public string? Address { get; set; }
     }
 }

@@ -1,8 +1,54 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1>Inventory Management System</h1>
+    <p class="lead">Products, stock levels, supplies and orders in one place</p>
 </div>
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="row text-center">
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2>@ViewBag.ProductsCount</h2><p>Products</p>
+                    <a asp-controller="Products" asp-action="Index">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-danger">
+                <div class="card-body">
+                    <h2>@ViewBag.LowStockCount</h2><p>Low on stock</p>
+                    <a asp-controller="Stock" asp-action="Index">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2>@ViewBag.OrdersCount</h2><p>Orders</p>
+                    <a asp-controller="Orders" asp-action="Index">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2>@ViewBag.PendingSupplies</h2><p>Supplies pending</p>
+                    <a asp-controller="Supplies" asp-action="Index">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <p>Please log in or register to use the system.</p>
+        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Login">Log in</a>
+        <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </div>
+}

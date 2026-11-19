@@ -1,0 +1,32 @@
+@model IEnumerable<InventorySystem.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Orders</h1>
+<p>Customer orders. Creating an order reduces the product stock.</p>
+
+<p><a asp-action="Create" class="btn btn-primary">New order</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.Date)</th>
+            <th>@Html.DisplayNameFor(m => m.Product)</th>
+            <th>@Html.DisplayNameFor(m => m.Quantity)</th>
+            <th>@Html.DisplayNameFor(m => m.TotalPrice)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Date.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@item.Product?.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.TotalPrice</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "New order";
+}
+
+<h1>New order</h1>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Product</label>
+        <select name="productId" class="form-select" asp-items="ViewBag.Products"></select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Quantity</label>
+        <input name="quantity" type="number" min="1" value="1" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create order</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+</form>

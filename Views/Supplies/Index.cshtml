@@ -1,0 +1,44 @@
+@model IEnumerable<InventorySystem.Models.Supply>
+
+@{
+    ViewData["Title"] = "Supplies";
+}
+
+<h1>Supplies</h1>
+<p>Deliveries from suppliers. Click "Receive" when goods arrive to add them to stock.</p>
+
+<p><a asp-action="Create" class="btn btn-primary">New supply</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.Date)</th>
+            <th>@Html.DisplayNameFor(m => m.Supplier)</th>
+            <th>@Html.DisplayNameFor(m => m.Product)</th>
+            <th>@Html.DisplayNameFor(m => m.Quantity)</th>
+            <th>@Html.DisplayNameFor(m => m.Status)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Date.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@item.Supplier?.Name</td>
+                <td>@item.Product?.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Status</td>
+                <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <form asp-action="Receive" asp-route-id="@item.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success">Receive</button>
+                        </form>
+                    }
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

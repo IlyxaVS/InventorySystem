@@ -1,18 +1,29 @@
+using InventorySystem.Data;
 using InventorySystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace InventorySystem.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ApplicationDbContext _context;
+
+        public HomeController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Index()
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                ViewBag.ProductsCount = await _context.Products.CountAsync();
+                ViewBag.LowStockCount = await _context.Products.CountAsync(p => p.Quantity < p.MinQuantity);
+                ViewBag.OrdersCount = await _context.Orders.CountAsync();
+                ViewBag.PendingSupplies = await _context.Supplies.CountAsync(s => s.Status == "Pending");
+            }
             return View();
         }
 

@@ -1,0 +1,94 @@
+﻿@model List<InventorySystem.Models.SalesRow>
+
+@{
+    ViewData["Title"] = "Reports";
+    var stock = (List<InventorySystem.Models.Product>)ViewBag.Stock;
+}
+
+<h1>Reports</h1>
+
+<h3 class="mt-4">Stock report</h3>
+<p>
+    Total stock value: <strong>@stock.Sum(p => p.Price * p.Quantity)</strong>
+    <a asp-action="StockCsv" class="btn btn-sm btn-outline-secondary ms-3">Download CSV</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>SKU</th>
+            <th>Category</th>
+            <th>Warehouse</th>
+            <th>Price</th>
+            <th>In stock</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in stock)
+        {
+            <tr class="@(p.Quantity < p.MinQuantity ? "table-danger" : "")">
+                <td>@p.Name</td>
+                <td>@p.Sku</td>
+                <td>@p.Category?.Name</td>
+                <td>@p.Warehouse?.Name</td>
+                <td>@p.Price</td>
+                <td>@p.Quantity</td>
+                <td>@(p.Price * p.Quantity)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3 class="mt-5">Sales report</h3>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label class="form-label">From</label>
+        <input type="date" name="from" value="@ViewBag.From" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">To</label>
+        <input type="date" name="to" value="@ViewBag.To" class="form-control" />
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Show</button>
+        <a asp-action="SalesCsv" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To"
+           class="btn btn-outline-secondary">Download CSV</a>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity sold</th>
+            <th>Revenue</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            <tr>
+                <td>@row.ProductName</td>
+                <td>@row.Quantity</td>
+                <td>@row.Revenue</td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="3" class="text-muted">No sales in this period.</td></tr>
+        }
+    </tbody>
+    @if (Model.Any())
+    {
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th>@Model.Sum(r => r.Quantity)</th>
+                <th>@Model.Sum(r => r.Revenue)</th>
+            </tr>
+        </tfoot>
+    }
+</table>

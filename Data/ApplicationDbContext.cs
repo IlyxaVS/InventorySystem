@@ -6,10 +6,7 @@ namespace InventorySystem.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
@@ -22,7 +19,6 @@ namespace InventorySystem.Data
         {
             base.OnModelCreating(builder);
 
-            // індекси для швидкого пошуку
             builder.Entity<Product>().HasIndex(p => p.Sku).IsUnique();
             builder.Entity<Product>().HasIndex(p => p.Name);
             builder.Entity<Order>().HasIndex(o => o.Date);
