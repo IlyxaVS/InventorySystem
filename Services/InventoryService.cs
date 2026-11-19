@@ -12,7 +12,7 @@ namespace InventorySystem.Services
     }
 
     /// <summary>
-    /// Інтерфейс: перелік того, що вміє сервіс.
+    /// Interface: the list of operations the service provides.
     /// </summary>
     public interface IInventoryService
     {

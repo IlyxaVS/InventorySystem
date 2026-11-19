@@ -1,74 +1,67 @@
 @model InventorySystem.Models.Product
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit product";
 }
 
-<h1>Edit</h1>
-
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sku" class="control-label"></label>
-                <input asp-for="Sku" class="form-control" />
-                <span asp-validation-for="Sku" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MinQuantity" class="control-label"></label>
-                <input asp-for="MinQuantity" class="form-control" />
-                <span asp-validation-for="MinQuantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="WarehouseId" class="control-label"></label>
-                <input asp-for="WarehouseId" class="form-control" />
-                <span asp-validation-for="WarehouseId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Warehouse" class="control-label"></label>
-                <input asp-for="Warehouse" class="form-control" />
-                <span asp-validation-for="Warehouse" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="page-header">
+    <div>
+        <h1>Edit product</h1>
+        <p>Change the product details. To change the stock, you can also use orders and supplies, which update it automatically.</p>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="panel form-card">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Sku" class="form-label"></label>
+            <input asp-for="Sku" class="form-control" />
+            <div class="form-text">A unique code that identifies the product, for example LAP-001.</div>
+            <span asp-validation-for="Sku" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="Quantity" class="form-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="MinQuantity" class="form-label"></label>
+                <input asp-for="MinQuantity" class="form-control" />
+                <span asp-validation-for="MinQuantity" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="WarehouseId" class="form-label"></label>
+                <select asp-for="WarehouseId" class="form-select" asp-items="ViewBag.WarehouseId"></select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

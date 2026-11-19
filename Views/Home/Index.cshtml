@@ -2,53 +2,56 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="text-center mb-4">
+<div class="hero">
     <h1>Inventory Management System</h1>
-    <p class="lead">Products, stock levels, supplies and orders in one place</p>
+    <p>Keep track of your products, stock levels, supplies from suppliers and customer orders in one place.</p>
 </div>
 
 @if (User.Identity?.IsAuthenticated == true)
 {
-    <div class="row text-center">
-        <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h2>@ViewBag.ProductsCount</h2><p>Products</p>
-                    <a asp-controller="Products" asp-action="Index">Open</a>
-                </div>
-            </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <a class="stat-card" asp-controller="Products" asp-action="Index">
+                <span class="stat-value">@ViewBag.ProductsCount</span>
+                <span class="stat-label">Products in the catalog</span>
+            </a>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-danger">
-                <div class="card-body">
-                    <h2>@ViewBag.LowStockCount</h2><p>Low on stock</p>
-                    <a asp-controller="Stock" asp-action="Index">Open</a>
-                </div>
-            </div>
+        <div class="col-md-6 col-lg-3">
+            <a class="stat-card stat-danger" asp-controller="Stock" asp-action="Index">
+                <span class="stat-value">@ViewBag.LowStockCount</span>
+                <span class="stat-label">Products low on stock</span>
+            </a>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h2>@ViewBag.OrdersCount</h2><p>Orders</p>
-                    <a asp-controller="Orders" asp-action="Index">Open</a>
-                </div>
-            </div>
+        <div class="col-md-6 col-lg-3">
+            <a class="stat-card" asp-controller="Orders" asp-action="Index">
+                <span class="stat-value">@ViewBag.OrdersCount</span>
+                <span class="stat-label">Orders placed</span>
+            </a>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h2>@ViewBag.PendingSupplies</h2><p>Supplies pending</p>
-                    <a asp-controller="Supplies" asp-action="Index">Open</a>
-                </div>
-            </div>
+        <div class="col-md-6 col-lg-3">
+            <a class="stat-card" asp-controller="Supplies" asp-action="Index">
+                <span class="stat-value">@ViewBag.PendingSupplies</span>
+                <span class="stat-label">Supplies waiting to arrive</span>
+            </a>
         </div>
+    </div>
+
+    <div class="panel">
+        <h2 class="panel-title">How it works</h2>
+        <ol class="steps">
+            <li><strong>Set up the basics.</strong> Add categories, warehouses and suppliers.</li>
+            <li><strong>Add products.</strong> Each product has a unique SKU (product code), a price, the current stock and a minimum stock level.</li>
+            <li><strong>Sell.</strong> Creating an order reduces the stock. If the stock drops below the minimum, a supply request is created automatically.</li>
+            <li><strong>Restock.</strong> When goods arrive from the supplier, press Receive on the Supplies page to add them to the stock.</li>
+            <li><strong>Review.</strong> Open Reports to see the stock value and sales for any period.</li>
+        </ol>
     </div>
 }
 else
 {
     <div class="text-center">
-        <p>Please log in or register to use the system.</p>
+        <p class="text-muted">Please log in or register to start working with the system.</p>
         <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Login">Log in</a>
-        <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="btn btn-outline-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </div>
 }

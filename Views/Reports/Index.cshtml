@@ -5,90 +5,121 @@
     var stock = (List<InventorySystem.Models.Product>)ViewBag.Stock;
 }
 
-<h1>Reports</h1>
-
-<h3 class="mt-4">Stock report</h3>
-<p>
-    Total stock value: <strong>@stock.Sum(p => p.Price * p.Quantity)</strong>
-    <a asp-action="StockCsv" class="btn btn-sm btn-outline-secondary ms-3">Download CSV</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>SKU</th>
-            <th>Category</th>
-            <th>Warehouse</th>
-            <th>Price</th>
-            <th>In stock</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in stock)
-        {
-            <tr class="@(p.Quantity < p.MinQuantity ? "table-danger" : "")">
-                <td>@p.Name</td>
-                <td>@p.Sku</td>
-                <td>@p.Category?.Name</td>
-                <td>@p.Warehouse?.Name</td>
-                <td>@p.Price</td>
-                <td>@p.Quantity</td>
-                <td>@(p.Price * p.Quantity)</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<h3 class="mt-5">Sales report</h3>
-
-<form method="get" class="row g-2 mb-3">
-    <div class="col-auto">
-        <label class="form-label">From</label>
-        <input type="date" name="from" value="@ViewBag.From" class="form-control" />
+<div class="page-header">
+    <div>
+        <h1>Reports</h1>
+        <p>Two reports: the current stock with its total value, and the sales for a period you choose. Both can be downloaded as CSV files and opened in Excel.</p>
     </div>
-    <div class="col-auto">
-        <label class="form-label">To</label>
-        <input type="date" name="to" value="@ViewBag.To" class="form-control" />
-    </div>
-    <div class="col-auto align-self-end">
-        <button type="submit" class="btn btn-primary">Show</button>
-        <a asp-action="SalesCsv" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To"
-           class="btn btn-outline-secondary">Download CSV</a>
-    </div>
-</form>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity sold</th>
-            <th>Revenue</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var row in Model)
-        {
-            <tr>
-                <td>@row.ProductName</td>
-                <td>@row.Quantity</td>
-                <td>@row.Revenue</td>
-            </tr>
-        }
-        @if (!Model.Any())
-        {
-            <tr><td colspan="3" class="text-muted">No sales in this period.</td></tr>
-        }
-    </tbody>
-    @if (Model.Any())
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="panel-title mb-0">Stock report</h2>
+    <a asp-action="StockCsv" class="btn btn-sm btn-outline-secondary">Download CSV</a>
+</div>
+<p class="text-muted">Total stock value: <strong>@stock.Sum(p => p.Price * p.Quantity).ToString("N2")</strong></p>
+
+<div class="panel panel-flush">
+    @if (!stock.Any())
     {
-        <tfoot>
-            <tr>
-                <th>Total</th>
-                <th>@Model.Sum(r => r.Quantity)</th>
-                <th>@Model.Sum(r => r.Revenue)</th>
-            </tr>
-        </tfoot>
+        <div class="empty">No products yet.</div>
     }
-</table>
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Category</th>
+                        <th>Warehouse</th>
+                        <th>Price</th>
+                        <th>In stock</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in stock)
+                    {
+                        <tr>
+                            <td>@p.Name</td>
+                            <td>@p.Sku</td>
+                            <td>@p.Category?.Name</td>
+                            <td>@p.Warehouse?.Name</td>
+                            <td>@p.Price.ToString("N2")</td>
+                            <td>
+                                @p.Quantity
+                                @if (p.Quantity < p.MinQuantity)
+                                {
+                                    <span class="badge bg-danger ms-1">Low</span>
+                                }
+                            </td>
+                            <td>@((p.Price * p.Quantity).ToString("N2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2 mt-4">
+    <h2 class="panel-title mb-0">Sales report</h2>
+    <a asp-action="SalesCsv" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To"
+       class="btn btn-sm btn-outline-secondary">Download CSV</a>
+</div>
+<p class="text-muted">Choose the period and press Show. The report groups the orders by product.</p>
+
+<div class="panel">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-auto">
+            <label class="form-label">From</label>
+            <input type="date" name="from" value="@ViewBag.From" class="form-control" />
+        </div>
+        <div class="col-auto">
+            <label class="form-label">To</label>
+            <input type="date" name="to" value="@ViewBag.To" class="form-control" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Show</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel panel-flush">
+    @if (!Model.Any())
+    {
+        <div class="empty">No sales in this period.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity sold</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        <tr>
+                            <td>@row.ProductName</td>
+                            <td>@row.Quantity</td>
+                            <td>@row.Revenue.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>@Model.Sum(r => r.Quantity)</th>
+                        <th>@Model.Sum(r => r.Revenue).ToString("N2")</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+</div>

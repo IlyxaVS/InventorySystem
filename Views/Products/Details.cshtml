@@ -1,80 +1,31 @@
 @model InventorySystem.Models.Product
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Product details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sku)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sku)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MinQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MinQuantity)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoryId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WarehouseId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WarehouseId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Warehouse)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Warehouse)
-        </dd>
-    </dl>
+<div class="page-header">
+    <div>
+        <h1>@Model.Name</h1>
+        <p>All information about this product.</p>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="panel form-card">
+    <dl class="row detail-list mb-4">
+        <dt class="col-sm-5">@Html.DisplayNameFor(m => m.Sku)</dt>
+        <dd class="col-sm-7">@Model.Sku</dd>
+        <dt class="col-sm-5">@Html.DisplayNameFor(m => m.Category)</dt>
+        <dd class="col-sm-7">@Model.Category?.Name</dd>
+        <dt class="col-sm-5">@Html.DisplayNameFor(m => m.Warehouse)</dt>
+        <dd class="col-sm-7">@Model.Warehouse?.Name</dd>
+        <dt class="col-sm-5">@Html.DisplayNameFor(m => m.Price)</dt>
+        <dd class="col-sm-7">@Model.Price.ToString("N2")</dd>
+        <dt class="col-sm-5">@Html.DisplayNameFor(m => m.Quantity)</dt>
+        <dd class="col-sm-7">@Model.Quantity</dd>
+        <dt class="col-sm-5">@Html.DisplayNameFor(m => m.MinQuantity)</dt>
+        <dd class="col-sm-7">@Model.MinQuantity</dd>
+    </dl>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to list</a>
 </div>

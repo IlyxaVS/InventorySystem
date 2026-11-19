@@ -2,22 +2,29 @@
     ViewData["Title"] = "New order";
 }
 
-<h1>New order</h1>
+<div class="page-header">
+    <div>
+        <h1>New order</h1>
+        <p>Choose a product and the quantity. The stock is reduced right away. If the stock drops below the minimum level, the system creates a supply request automatically.</p>
+    </div>
+</div>
 
 @if (ViewBag.Error != null)
 {
-    <div class="alert alert-danger">@ViewBag.Error</div>
+    <div class="alert alert-danger form-card">@ViewBag.Error</div>
 }
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label class="form-label">Product</label>
-        <select name="productId" class="form-select" asp-items="ViewBag.Products"></select>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Quantity</label>
-        <input name="quantity" type="number" min="1" value="1" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Create order</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
-</form>
+<div class="panel form-card">
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label class="form-label">Product</label>
+            <select name="productId" class="form-select" asp-items="ViewBag.Products"></select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Quantity</label>
+            <input name="quantity" type="number" min="1" value="1" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create order</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

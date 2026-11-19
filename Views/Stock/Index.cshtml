@@ -4,31 +4,57 @@
     ViewData["Title"] = "Stock";
 }
 
-<h1>Stock levels</h1>
-<p>Products with stock below the minimum are highlighted in red.</p>
+<div class="page-header">
+    <div>
+        <h1>Stock levels</h1>
+        <p>The current quantity of every product in your warehouses. A product is marked Low when its stock is below the minimum stock level, so it is time to order more.</p>
+    </div>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>SKU</th>
-            <th>Category</th>
-            <th>Warehouse</th>
-            <th>In stock</th>
-            <th>Minimum</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model)
-        {
-            <tr class="@(p.Quantity < p.MinQuantity ? "table-danger" : "")">
-                <td>@p.Name</td>
-                <td>@p.Sku</td>
-                <td>@p.Category?.Name</td>
-                <td>@p.Warehouse?.Name</td>
-                <td>@p.Quantity</td>
-                <td>@p.MinQuantity</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="panel panel-flush">
+    @if (!Model.Any())
+    {
+        <div class="empty">No products yet. Add products to see their stock here.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Category</th>
+                        <th>Warehouse</th>
+                        <th>In stock</th>
+                        <th>Minimum</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.Name</td>
+                            <td>@p.Sku</td>
+                            <td>@p.Category?.Name</td>
+                            <td>@p.Warehouse?.Name</td>
+                            <td>@p.Quantity</td>
+                            <td>@p.MinQuantity</td>
+                            <td>
+                                @if (p.Quantity < p.MinQuantity)
+                                {
+                                    <span class="badge bg-danger">Low</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">OK</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

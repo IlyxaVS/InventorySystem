@@ -4,28 +4,33 @@
     ViewData["Title"] = "New supply";
 }
 
-<h1>New supply</h1>
-
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="mb-3">
-        <label asp-for="SupplierId" class="form-label"></label>
-        <select asp-for="SupplierId" class="form-select" asp-items="ViewBag.SupplierId"></select>
+<div class="page-header">
+    <div>
+        <h1>New supply</h1>
+        <p>Order goods from a supplier. The supply is saved as Pending, and the stock increases only after you press Receive on the Supplies page.</p>
     </div>
-    <div class="mb-3">
-        <label asp-for="ProductId" class="form-label"></label>
-        <select asp-for="ProductId" class="form-select" asp-items="ViewBag.ProductId"></select>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Quantity" class="form-label"></label>
-        <input asp-for="Quantity" class="form-control" />
-        <span asp-validation-for="Quantity" class="text-danger"></span>
-    </div>
+</div>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
-</form>
+<div class="panel form-card">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="SupplierId" class="form-label"></label>
+            <select asp-for="SupplierId" class="form-select" asp-items="ViewBag.SupplierId"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ProductId" class="form-label"></label>
+            <select asp-for="ProductId" class="form-select" asp-items="ViewBag.ProductId"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Quantity" class="form-label"></label>
+            <input asp-for="Quantity" class="form-control" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
 
 @section Scripts {
     @{

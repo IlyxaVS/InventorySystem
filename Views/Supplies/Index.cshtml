@@ -4,41 +4,64 @@
     ViewData["Title"] = "Supplies";
 }
 
-<h1>Supplies</h1>
-<p>Deliveries from suppliers. Click "Receive" when goods arrive to add them to stock.</p>
+<div class="page-header">
+    <div>
+        <h1>Supplies</h1>
+        <p>Deliveries from your suppliers. A new supply starts as Pending. When the goods arrive, press Receive to mark it as Received and add the quantity to the product stock. Supplies are also created automatically when a product runs low.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">New supply</a>
+</div>
 
-<p><a asp-action="Create" class="btn btn-primary">New supply</a></p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.Date)</th>
-            <th>@Html.DisplayNameFor(m => m.Supplier)</th>
-            <th>@Html.DisplayNameFor(m => m.Product)</th>
-            <th>@Html.DisplayNameFor(m => m.Quantity)</th>
-            <th>@Html.DisplayNameFor(m => m.Status)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Date.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>@item.Supplier?.Name</td>
-                <td>@item.Product?.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.Status</td>
-                <td>
-                    @if (item.Status == "Pending")
+<div class="panel panel-flush">
+    @if (!Model.Any())
+    {
+        <div class="empty">No supplies yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.Date)</th>
+                        <th>@Html.DisplayNameFor(m => m.Supplier)</th>
+                        <th>@Html.DisplayNameFor(m => m.Product)</th>
+                        <th>@Html.DisplayNameFor(m => m.Quantity)</th>
+                        <th>@Html.DisplayNameFor(m => m.Status)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
                     {
-                        <form asp-action="Receive" asp-route-id="@item.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-success">Receive</button>
-                        </form>
+                        <tr>
+                            <td>@item.Date.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@item.Supplier?.Name</td>
+                            <td>@item.Product?.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>
+                                @if (item.Status == "Received")
+                                {
+                                    <span class="badge bg-success">Received</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                            </td>
+                            <td class="row-actions">
+                                @if (item.Status == "Pending")
+                                {
+                                    <form asp-action="Receive" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success">Receive</button>
+                                    </form>
+                                }
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </td>
+                        </tr>
                     }
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
