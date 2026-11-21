@@ -12,6 +12,7 @@ ASP.NET Core MVC web application for tracking products, stock levels, supplies a
 
 ## Tech stack
 ASP.NET Core MVC, Entity Framework Core (Code First), SQL Server LocalDB, Dependency Injection, async/await, xUnit, Bootstrap, JavaScript
+Run all tests from the repository root with `dotnet test`.
 
 ## Architecture
 - Models: entities (Product, Category, Warehouse, Supplier, Supply, Order)
@@ -24,7 +25,7 @@ ASP.NET Core MVC, Entity Framework Core (Code First), SQL Server LocalDB, Depend
 
 ## How to run
 1. Install Visual Studio with the ASP.NET workload and SQL Server LocalDB.
-2. Clone the repository and open `InventorySystem.sln`.
+2. Clone the repository and open `InventorySystem.slnx`.
 3. Check the connection strings `IdentityConnection` and `InventoryConnection` in `appsettings.json`.
 4. Open Package Manager Console (Default project: InventorySystem) and create both databases:
 ```
