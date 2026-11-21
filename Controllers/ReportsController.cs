@@ -11,9 +11,9 @@ namespace InventorySystem.Controllers
     [Authorize]
     public class ReportsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly InventoryDbContext _context;
 
-        public ReportsController(ApplicationDbContext context)
+        public ReportsController(InventoryDbContext context)
         {
             _context = context;
         }

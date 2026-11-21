@@ -8,9 +8,9 @@ namespace InventorySystem.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly InventoryDbContext _context;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(InventoryDbContext context)
         {
             _context = context;
         }

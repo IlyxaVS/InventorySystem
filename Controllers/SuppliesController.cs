@@ -9,22 +9,23 @@ using Microsoft.EntityFrameworkCore;
 [Authorize]
 public class SuppliesController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly InventoryDbContext _context;
     private readonly IInventoryService _inventory;
+    private readonly ILogger<SuppliesController> _logger;
 
-    public SuppliesController(ApplicationDbContext context, IInventoryService inventory)
+    public SuppliesController(InventoryDbContext context, IInventoryService inventory, ILogger<SuppliesController> logger)
     {
         _context = context;
         _inventory = inventory;
+        _logger = logger;
     }
 
     private void LoadLists(int? supplierId = null, int? productId = null)
     {
-        ViewBag.SupplierId = new SelectList(_context.Suppliers, "Id", "Name", supplierId);
-        ViewBag.ProductId = new SelectList(_context.Products, "Id", "Name", productId);
+        ViewBag.SupplierId = new SelectList(_context.Suppliers.OrderBy(s => s.Name), "Id", "Name", supplierId);
+        ViewBag.ProductId = new SelectList(_context.Products.OrderBy(p => p.Name), "Id", "Name", productId);
     }
 
-    // GET: Supplies
     public async Task<IActionResult> Index()
     {
         var supplies = _context.Supplies
@@ -34,41 +35,62 @@ public class SuppliesController : Controller
         return View(await supplies.ToListAsync());
     }
 
-    // GET: Supplies/Create
     public IActionResult Create()
     {
         LoadLists();
         return View();
     }
 
-    // POST: Supplies/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(
-        [Bind("SupplierId,ProductId,Quantity")] Supply supply)
+    public async Task<IActionResult> Create([Bind("SupplierId,ProductId,Quantity")] Supply supply)
     {
+        if (supply.Quantity <= 0)
+        {
+            ModelState.AddModelError("Quantity", "Quantity must be greater than 0.");
+        }
+
         if (ModelState.IsValid)
         {
-            supply.Date = DateTime.Now;
-            supply.Status = "Pending";
-            _context.Add(supply);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                supply.Date = DateTime.Now;
+                supply.Status = "Pending";
+                _context.Add(supply);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to save supply for product {ProductId}", supply.ProductId);
+                ModelState.AddModelError("", "Could not save the supply. Check that the supplier and the product exist.");
+            }
         }
+
         LoadLists(supply.SupplierId, supply.ProductId);
         return View(supply);
     }
 
-    // POST: Supplies/Receive/5  (marks supply as received and increases stock)
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Receive(int id)
     {
-        await _inventory.ReceiveSupplyAsync(id);
+        try
+        {
+            await _inventory.ReceiveSupplyAsync(id);
+        }
+        catch (InventoryException ex)
+        {
+            TempData["Error"] = ex.Message;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to receive supply {Id}", id);
+            TempData["Error"] = "Could not receive the supply. Please try again.";
+        }
         return RedirectToAction(nameof(Index));
     }
 
-    // GET: Supplies/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return NotFound();
@@ -82,7 +104,6 @@ public class SuppliesController : Controller
         return View(supply);
     }
 
-    // POST: Supplies/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
@@ -90,8 +111,16 @@ public class SuppliesController : Controller
         var supply = await _context.Supplies.FindAsync(id);
         if (supply != null)
         {
-            _context.Supplies.Remove(supply);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Supplies.Remove(supply);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to delete supply {Id}", id);
+                TempData["Error"] = "Could not delete the supply. Please try again.";
+            }
         }
         return RedirectToAction(nameof(Index));
     }

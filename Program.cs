@@ -11,8 +11,15 @@ namespace InventorySystem
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            var identityConnection = builder.Configuration.GetConnectionString("IdentityConnection")
+                ?? throw new InvalidOperationException("Connection string 'IdentityConnection' not found.");
+            var inventoryConnection = builder.Configuration.GetConnectionString("InventoryConnection")
+                ?? throw new InvalidOperationException("Connection string 'InventoryConnection' not found.");
+
+            builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(identityConnection));
+            builder.Services.AddDbContext<InventoryDbContext>(options =>
+                options.UseSqlServer(inventoryConnection));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
@@ -23,7 +30,7 @@ namespace InventorySystem
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<AppIdentityDbContext>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
 

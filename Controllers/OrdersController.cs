@@ -9,13 +9,15 @@ using System.Security.Claims;
 [Authorize]
 public class OrdersController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly InventoryDbContext _context;
     private readonly IInventoryService _inventory;
+    private readonly ILogger<OrdersController> _logger;
 
-    public OrdersController(ApplicationDbContext context, IInventoryService inventory)
+    public OrdersController(InventoryDbContext context, IInventoryService inventory, ILogger<OrdersController> logger)
     {
         _context = context;
         _inventory = inventory;
+        _logger = logger;
     }
 
     public async Task<IActionResult> Index()
@@ -28,10 +30,9 @@ public class OrdersController : Controller
         return View(orders);
     }
 
-
     public IActionResult Create()
     {
-        ViewBag.Products = new SelectList(_context.Products, "Id", "Name");
+        ViewBag.Products = new SelectList(_context.Products.OrderBy(p => p.Name), "Id", "Name");
         return View();
     }
 
@@ -49,13 +50,13 @@ public class OrdersController : Controller
         {
             ViewBag.Error = ex.Message;
         }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to save order for product {ProductId}", productId);
+            ViewBag.Error = "Could not save the order. Please try again.";
+        }
 
-        ViewBag.Products = new SelectList(_context.Products, "Id", "Name", productId);
+        ViewBag.Products = new SelectList(_context.Products.OrderBy(p => p.Name), "Id", "Name", productId);
         return View();
-    }
-
-    private bool OrderExists(int? id)
-    {
-        return _context.Orders.Any(e => e.Id == id);
     }
 }

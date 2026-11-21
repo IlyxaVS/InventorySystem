@@ -11,9 +11,6 @@ namespace InventorySystem.Services
         }
     }
 
-    /// <summary>
-    /// Interface: the list of operations the service provides.
-    /// </summary>
     public interface IInventoryService
     {
         Task ReceiveSupplyAsync(int supplyId);
@@ -22,9 +19,9 @@ namespace InventorySystem.Services
 
     public class InventoryService : IInventoryService
     {
-        private readonly ApplicationDbContext _db;
+        private readonly InventoryDbContext _db;
 
-        public InventoryService(ApplicationDbContext db)
+        public InventoryService(InventoryDbContext db)
         {
             _db = db;
         }

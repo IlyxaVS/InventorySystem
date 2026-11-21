@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace InventorySystem.Data.Migrations
+namespace InventorySystem.Data.Migrations.Inventory
 {
     /// <inheritdoc />
-    public partial class AddInventoryTables : Migration
+    public partial class InitialInventory : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

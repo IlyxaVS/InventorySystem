@@ -7,86 +7,61 @@ using Microsoft.EntityFrameworkCore;
 [Authorize]
 public class SuppliersController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly InventoryDbContext _context;
+    private readonly ILogger<SuppliersController> _logger;
 
-    public SuppliersController(ApplicationDbContext context)
+    public SuppliersController(InventoryDbContext context, ILogger<SuppliersController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
-    // GET: SUPPLIERS
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Suppliers.ToListAsync());
+        return View(await _context.Suppliers.OrderBy(s => s.Name).ToListAsync());
     }
 
-    // GET: SUPPLIERS/Details/5
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var supplier = await _context.Suppliers
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (supplier == null)
-        {
-            return NotFound();
-        }
-
-        return View(supplier);
-    }
-
-    // GET: SUPPLIERS/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: SUPPLIERS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Phone")] Supplier supplier)
+    public async Task<IActionResult> Create([Bind("Name,Phone")] Supplier supplier)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(supplier);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Add(supplier);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to save supplier {Name}", supplier.Name);
+                ModelState.AddModelError("", "Could not save the supplier. Please try again.");
+            }
         }
         return View(supplier);
     }
 
-    // GET: SUPPLIERS/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
         var supplier = await _context.Suppliers.FindAsync(id);
-        if (supplier == null)
-        {
-            return NotFound();
-        }
+        if (supplier == null) return NotFound();
+
         return View(supplier);
     }
 
-    // POST: SUPPLIERS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Phone")] Supplier supplier)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Phone")] Supplier supplier)
     {
-        if (id != supplier.Id)
-        {
-            return NotFound();
-        }
+        if (id != supplier.Id) return NotFound();
 
         if (ModelState.IsValid)
         {
@@ -94,58 +69,50 @@ public class SuppliersController : Controller
             {
                 _context.Update(supplier);
                 await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SupplierExists(supplier.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!await _context.Suppliers.AnyAsync(e => e.Id == supplier.Id)) return NotFound();
+                throw;
             }
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to update supplier {Id}", supplier.Id);
+                ModelState.AddModelError("", "Could not save the changes. Please try again.");
+            }
         }
         return View(supplier);
     }
 
-    // GET: SUPPLIERS/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
-        var supplier = await _context.Suppliers
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (supplier == null)
-        {
-            return NotFound();
-        }
+        var supplier = await _context.Suppliers.FirstOrDefaultAsync(m => m.Id == id);
+        if (supplier == null) return NotFound();
 
         return View(supplier);
     }
 
-    // POST: SUPPLIERS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var supplier = await _context.Suppliers.FindAsync(id);
         if (supplier != null)
         {
-            _context.Suppliers.Remove(supplier);
+            try
+            {
+                _context.Suppliers.Remove(supplier);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to delete supplier {Id}", id);
+                TempData["Error"] = "This supplier cannot be deleted because supplies are linked to it.";
+            }
         }
-
-        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
-    }
-
-    private bool SupplierExists(int? id)
-    {
-        return _context.Suppliers.Any(e => e.Id == id);
     }
 }

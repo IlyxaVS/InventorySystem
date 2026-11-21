@@ -8,9 +8,9 @@ namespace InventorySystem.Controllers
     [Authorize]
     public class StockController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly InventoryDbContext _context;
 
-        public StockController(ApplicationDbContext context)
+        public StockController(InventoryDbContext context)
         {
             _context = context;
         }
